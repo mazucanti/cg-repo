@@ -40,6 +40,5 @@ protected:
     void resizeGL(int w, int h);
     void paintGL();
 public slots:
-    void toggleDarkMode(bool);
 };
 #endif // OPENGLWIDGET_H

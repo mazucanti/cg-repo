@@ -13,7 +13,7 @@ OpenGLWidget::~OpenGLWidget()
 void OpenGLWidget::initializeGL()
 {
     initializeOpenGLFunctions();
-    glClearColor(1,1,1,1);
+    glClearColor(0,0,0,0);
     qDebug("OpenGL Version: %s",glGetString(GL_VERSION));
     qDebug("GLSL Version: %s",glGetString(GL_SHADING_LANGUAGE_VERSION));
     createShaders();
@@ -32,15 +32,6 @@ void OpenGLWidget::paintGL()
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
-void OpenGLWidget::toggleDarkMode(bool changeToDarkMode)
-{
-    makeCurrent();
-    if(changeToDarkMode)
-        glClearColor(0,0,0,1);
-    else
-        glClearColor(1,1,1,1);
-    update();
-}
 
 void OpenGLWidget::createShaders(){
     makeCurrent();
@@ -127,10 +118,10 @@ void OpenGLWidget::createVBOs()
     vertices[2] = QVector4D( 0.5, 0.5 , 0, 1);
     vertices[3] = QVector4D(-0.5, 0.5 , 0, 1);
     // Create colors for the vertices
-    colors[0] = QVector4D(1, 0, 0, 1); // Red
-    colors[1] = QVector4D(0, 1, 0, 1); // Green
-    colors[2] = QVector4D(0, 0, 1, 1); // Blue
-    colors[3] = QVector4D(1, 1, 0, 1); // Yellow
+    colors[0] = QVector4D(1, 0, 1, 1); // Red
+    colors[1] = QVector4D(0, 1, 1, 1); // Green
+    colors[2] = QVector4D(1, 0, 1, 1); // Blue
+    colors[3] = QVector4D(1, 1, 1, 1); // Yellow
     // Topology of the mesh ( square )
     indices[0] = 0; indices[1] = 1; indices[2] = 2;
     indices[3] = 2; indices[4] = 3; indices[5] = 0;
