@@ -22,13 +22,6 @@
       </property>
      </widget>
     </item>
-    <item>
-     <widget class="QCheckBox" name="checkBoxDarkMode">
-      <property name="text">
-       <string>Dark Mode</string>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -54,22 +47,5 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>checkBoxDarkMode</sender>
-   <signal>clicked(bool)</signal>
-   <receiver>openGLWidget</receiver>
-   <slot>toggleDarkMode(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>130</x>
-     <y>537</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>345</x>
-     <y>276</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

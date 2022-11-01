@@ -35,6 +35,13 @@ public:
     void changeDiagonal();
 
     void keyPressEvent(QKeyEvent *event);
+
+    float playerPosYOffset{0};
+    float playerPosY{0};
+
+    float targetPosYOffset{0};
+    float targetPosY{0};
+
 protected:
     void initializeGL() ;
     void resizeGL(int w, int h);

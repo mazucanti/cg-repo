@@ -27,8 +27,16 @@ void OpenGLWidget::resizeGL(int w, int h)
 void OpenGLWidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT);
+
     glUseProgram(shaderProgram);
+    GLint localScaling{glGetUniformLocation(shaderProgram, "scaling")};
+    GLint locTranslation{glGetUniformLocation(shaderProgram, "translation")};
+
     glBindVertexArray(vao);
+
+    //Player
+    glUniform4f(locTranslation, -0.8f, )
+
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
