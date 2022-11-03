@@ -44,6 +44,7 @@ public:
 
     float playerPosYOffset{0};
     float playerPosY{0};
+    bool playerAlive{true};
 
     float targetPosYOffset{2.0f};
     float targetPosY{0};
