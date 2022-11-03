@@ -262,11 +262,7 @@ void OpenGLWidget::animate()
 
         if(targetPosYOffset > 0)
         {
-<<<<<<< Updated upstream
-            if(std::fabs(projectilePos[1] - targetPosY) < 0.2f)
-=======
             if(targetPosY > 0.8f)
->>>>>>> Stashed changes
             {
                 targetPosY = 0.8f;
                 targetPosYOffset = -targetPosYOffset;
