@@ -52,8 +52,10 @@ void OpenGLWidget::paintGL()
     //Projectile
     if(shooting){
         glUniform4f(locTranslation, projectilePos[0], projectilePos[1], 0, 0);
-        glUniform1f(localScaling, 0.05f);
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+        glUniform1f(localScaling, 0.1f);
+        //glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_LINES, 0, 2);
+        glDrawArrays(GL_LINES, 2, 2);
     }
 }
 
@@ -282,7 +284,7 @@ void OpenGLWidget::animate()
         projectilePos[0] += 3.0f * elTime;
         if(projectilePos[0] > 0.8f)
         {
-            if(std::fabs(projectilePos[1] - targetPosY) < 0.2f)
+            if(std::fabs(projectilePos[1] - targetPosY) < 0.15f)
             {
                 numHits++;
                 emit updateHitsLabel(QString("Acertos: %1").arg(numHits));
