@@ -251,47 +251,50 @@ void OpenGLWidget::keyReleaseEvent(QKeyEvent *event)
 void OpenGLWidget::animate()
 {
     float elTime{elapsedTime.restart()/1000.0f};
-
-    // PLAYER ANIMATION
-    playerPosY += playerPosYOffset * elTime;
-
-    if(playerPosY > 0.8f) playerPosY = 0.8f;
-    if(playerPosY < -0.8f) playerPosY = -0.8f;
-
-    // TARGET ANIMATION
-    targetPosY += targetPosYOffset * elTime;
-
-    if(targetPosYOffset > 0)
+    if(playerAlive)
     {
-        if(targetPosY > 0.8f)
-        {
-            targetPosY = 0.8f;
-            targetPosYOffset = -targetPosYOffset;
-        }
-    }
-    else
-    {
-        if(targetPosY < -0.8f)
-        {
-            targetPosY = -0.8f;
-            targetPosYOffset = -targetPosYOffset;
-        }
-    }
+        // PLAYER ANIMATION
+        playerPosY += playerPosYOffset * elTime;
 
-    // PROJECTILE ANIMATION
-    if(shooting)
-    {
-        projectilePos[0] += 3.0f * elTime;
-        if(projectilePos[0] > 0.8f)
+        if(playerPosY > 0.8f) playerPosY = 0.8f;
+        if(playerPosY < -0.8f) playerPosY = -0.8f;
+
+        // TARGET ANIMATION
+        targetPosY += targetPosYOffset * elTime;
+
+        if(targetPosYOffset > 0)
         {
-            if(std::fabs(projectilePos[1] - targetPosY) < 0.15f)
+            if(targetPosY > 0.8f)
             {
-                numHits++;
-                emit updateHitsLabel(QString("Acertos: %1").arg(numHits));
-                shooting = false;
+                targetPosY = 0.8f;
+                targetPosYOffset = -targetPosYOffset;
             }
         }
-        if(projectilePos[0] > 1.0f) shooting = false;
+        else
+        {
+            if(targetPosY < -0.8f)
+            {
+                targetPosY = -0.8f;
+                targetPosYOffset = -targetPosYOffset;
+            }
+        }
+
+
+        // PROJECTILE ANIMATION
+        if(shooting)
+        {
+            projectilePos[0] += 3.0f * elTime;
+            if(projectilePos[0] > 0.8f)
+            {
+                if(std::fabs(projectilePos[1] - targetPosY) < 0.15f)
+                {
+                    numHits++;
+                    emit updateHitsLabel(QString("Acertos: %1").arg(numHits));
+                    shooting = false;
+                }
+            }
+            if(projectilePos[0] > 1.0f) shooting = false;
+        }
     }
     update();
 }
