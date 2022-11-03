@@ -282,9 +282,10 @@ void OpenGLWidget::animate()
         projectilePos[0] += 3.0f * elTime;
         if(projectilePos[0] > 0.8f)
         {
-            if(std::fabs(projectilePos[1] - targetPosY) < 0.125f)
+            if(std::fabs(projectilePos[1] - targetPosY) < 0.2f)
             {
                 numHits++;
+                emit updateHitsLabel(QString("Acertos: %1").arg(numHits));
                 shooting = false;
             }
         }

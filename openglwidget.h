@@ -54,7 +54,8 @@ public:
     bool shooting{false};
     std::array<float,2> projectilePos;
     int numHits{0};
-
+signals:
+    void updateHitsLabel(QString);
 protected:
     void initializeGL() override;
     void resizeGL(int w, int h) override;
