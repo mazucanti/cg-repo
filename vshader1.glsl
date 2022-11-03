@@ -10,6 +10,6 @@ uniform vec4 translation;
 
 void main ()
 {
-    gl_Position = vPosition * vec4(scaling, scaling, scaling, 1);
+    gl_Position = vPosition * vec4(scaling, scaling, scaling, 1) + translation;
     v2fcolor = vColors ;
 }

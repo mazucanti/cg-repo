@@ -7,6 +7,11 @@
 #include <QFile>
 #include <QApplication>
 #include <QKeyEvent>
+#include <QTimer>
+#include <QElapsedTimer>
+#include <array>
+#include <QDebug>
+#include <cmath>
 
 class OpenGLWidget : public QOpenGLWidget, public QOpenGLFunctions_4_0_Core
 {
@@ -34,18 +39,27 @@ public:
 
     void changeDiagonal();
 
-    void keyPressEvent(QKeyEvent *event);
+    void keyPressEvent(QKeyEvent *event) override;
+    void keyReleaseEvent(QKeyEvent *event) override;
 
     float playerPosYOffset{0};
     float playerPosY{0};
 
-    float targetPosYOffset{0};
+    float targetPosYOffset{2.0f};
     float targetPosY{0};
 
+    QTimer timer;
+    QElapsedTimer elapsedTime;
+
+    bool shooting{false};
+    std::array<float,2> projectilePos;
+    int numHits{0};
+
 protected:
-    void initializeGL() ;
-    void resizeGL(int w, int h);
-    void paintGL();
+    void initializeGL() override;
+    void resizeGL(int w, int h) override;
+    void paintGL() override;
 public slots:
+    void animate();
 };
 #endif // OPENGLWIDGET_H
