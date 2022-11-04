@@ -62,7 +62,6 @@ public:
     bool playerAlive{true};
 
     bool targetHit{false};
-    int flashCount{0};
 
 signals:
     void updateHitsLabel(QString);

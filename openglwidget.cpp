@@ -57,6 +57,14 @@ void OpenGLWidget::paintGL()
             glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 
         }
+        // Hit color
+        if(targetHit)
+        {
+            glClearColor(1,0.4,0,1);
+            targetHit = false;
+        }
+        else glClearColor(0,0,0,1);
+        //Enemy projectile
         if(enemyShooting){
             glUniform4f(locTranslation, enemyProjectilePos[0], enemyProjectilePos[1], 0, 0);
             glUniform1f(localScaling, 0.1f);
@@ -390,17 +398,7 @@ void OpenGLWidget::animate()
             }
             if(projectilePos[0] > 1.0f) shooting = false;
         }
-        if(targetHit){
-            if(flashCount % 50 < 25) glClearColor(1,0.4,0,1);
-            else glClearColor(0,0,0,1);
-            if(flashCount >= 500)
-            {
-                flashCount = 0;
-                targetHit = false;
-            }
-            flashCount++;
 
-        }
         if(
                 std::fabs(playerPos[0] - 0.8f) < 0.2
                 && std::fabs(playerPos[1] - targetPosY) < 0.2
