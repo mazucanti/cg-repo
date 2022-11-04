@@ -38,25 +38,36 @@ void OpenGLWidget::paintGL()
     GLint locTranslation{glGetUniformLocation(shaderProgram, "translation")};
 
     glBindVertexArray(vao);
+    if(playerAlive)
+    {
+        //Player
+        glUniform4f(locTranslation, playerPos[0], playerPos[1], 0, 0);
+        glUniform1f(localScaling, 0.2f);
+        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 
-    //Player
-    glUniform4f(locTranslation, -0.8f, playerPosY, 0, 0);
-    glUniform1f(localScaling, 0.2f);
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+        //Target
+        glUniform4f(locTranslation, 0.8f, targetPosY, 0, 0);
+        glUniform1f(localScaling, 0.2f);
+        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 
-    //Target
-    glUniform4f(locTranslation, 0.8f, targetPosY, 0, 0);
-    glUniform1f(localScaling, 0.2f);
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+        //Projectile
+        if(shooting){
+            glUniform4f(locTranslation, projectilePos[0], projectilePos[1], 0, 0);
+            glUniform1f(localScaling, 0.1f);
+            glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 
-    //Projectile
-    if(shooting){
-        glUniform4f(locTranslation, projectilePos[0], projectilePos[1], 0, 0);
-        glUniform1f(localScaling, 0.1f);
-        //glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-        glDrawArrays(GL_LINES, 0, 2);
-        glDrawArrays(GL_LINES, 2, 2);
+        }
+        if(enemyShooting){
+            glUniform4f(locTranslation, enemyProjectilePos[0], enemyProjectilePos[1], 0, 0);
+            glUniform1f(localScaling, 0.1f);
+            glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+        }
     }
+    else
+    {
+        glClearColor(1,0,0,1);
+    }
+
 }
 
 
@@ -204,16 +215,28 @@ void OpenGLWidget::keyPressEvent(QKeyEvent *event)
     switch(event->key())
     {
     case Qt::Key_Up:
-        playerPosYOffset = 2.0f;
+        playerPosOffset[1] = 2.0f;
         break;
     case Qt::Key_W:
-        playerPosYOffset = 2.0f;
+        playerPosOffset[1] = 2.0f;
+        break;
+    case Qt::Key_D:
+        playerPosOffset[0] = 2.0f;
+        break;
+    case Qt::Key_A:
+        playerPosOffset[0] = -2.0f;
         break;
     case Qt::Key_Down:
-        playerPosYOffset = -2.0f;
+        playerPosOffset[1] = -2.0f;
         break;
     case Qt::Key_S:
-        playerPosYOffset = -2.0f;
+        playerPosOffset[1] = -2.0f;
+        break;
+    case Qt::Key_Left:
+        playerPosOffset[0] = -2.0f;
+        break;
+    case Qt::Key_Right:
+        playerPosOffset[0] = 2.0f;
         break;
     case Qt::Key_Escape:
         QApplication::quit();
@@ -222,8 +245,10 @@ void OpenGLWidget::keyPressEvent(QKeyEvent *event)
         if(!shooting)
         {
             shooting = true;
-            projectilePos[0] = -0.7f;
-            projectilePos[1] = playerPosY;
+            projectilePos[0] = playerPos[0] + 0.1f;
+            projectilePos[1] = playerPos[1];
+            projectilePosOffset[0] = playerPosOffset[0];
+            projectilePosOffset[1] = playerPosOffset[1];
         }
         break;
     }
@@ -233,17 +258,29 @@ void OpenGLWidget::keyReleaseEvent(QKeyEvent *event)
 {
     switch(event->key())
     {
-    case Qt::Key_W:
-        playerPosYOffset = 0;
-        break;
-    case Qt::Key_S:
-        playerPosYOffset = 0;
-        break;
     case Qt::Key_Up:
-        playerPosYOffset = 0;
+        playerPosOffset[1] = 0;
+        break;
+    case Qt::Key_W:
+        playerPosOffset[1] = 0;
+        break;
+    case Qt::Key_D:
+        playerPosOffset[0] = 0;
+        break;
+    case Qt::Key_A:
+        playerPosOffset[0] = 0;
         break;
     case Qt::Key_Down:
-        playerPosYOffset = 0;
+        playerPosOffset[1] = 0;
+        break;
+    case Qt::Key_S:
+        playerPosOffset[1] = 0;
+        break;
+    case Qt::Key_Left:
+        playerPosOffset[0] = 0;
+        break;
+    case Qt::Key_Right:
+        playerPosOffset[0] = 0;
         break;
     }
 }
@@ -254,10 +291,14 @@ void OpenGLWidget::animate()
     if(playerAlive)
     {
         // PLAYER ANIMATION
-        playerPosY += playerPosYOffset * elTime;
+        playerPos[0] += playerPosOffset[0] * elTime;
+        playerPos[1] += playerPosOffset[1] * elTime;
 
-        if(playerPosY > 0.8f) playerPosY = 0.8f;
-        if(playerPosY < -0.8f) playerPosY = -0.8f;
+        if(playerPos[1] > 0.8f) playerPos[1] = 0.8f;
+        if(playerPos[1] < -0.8f) playerPos[1] = -0.8f;
+        if(playerPos[0] > 0.8f) playerPos[0] = 0.8f;
+        if(playerPos[0] < -0.8f) playerPos[0] = -0.8f;
+
 
         // TARGET ANIMATION
         targetPosY += targetPosYOffset * elTime;
@@ -278,23 +319,96 @@ void OpenGLWidget::animate()
                 targetPosYOffset = -targetPosYOffset;
             }
         }
+        if(!enemyShooting)
+        {
+            if(std::fabs(targetPosY - playerPos[1]) < 1.0f)
+            {
+                enemyProjectilePos[0] = 0.7f;
+                enemyProjectilePos[1] = targetPosY;
+                enemyProjectileOffset[0] = -1.5f;
+                enemyProjectileOffset[1] = targetPosYOffset;
+                enemyShooting = true;
+            }
+        }
+        else
+        {
+            enemyProjectilePos[0] += (elTime * enemyProjectileOffset[0]);
+            enemyProjectilePos[1] += (elTime * enemyProjectileOffset[1]);
+            if(enemyProjectileOffset[1] > 0)
+            {
+                if(enemyProjectilePos[1] > 0.8f)
+                {
+                    enemyProjectilePos[1] = 0.8f;
+                    enemyProjectileOffset[1] = -enemyProjectileOffset[1];
+                }
+            }
+            if(enemyProjectileOffset[1] < 0)
+            {
+                if(enemyProjectilePos[1] < -0.8f)
+                {
+                    enemyProjectilePos[1] = -0.8f;
+                    enemyProjectileOffset[1] = -enemyProjectileOffset[1];
+                }
+            }
+
+            if(std::fabs(enemyProjectilePos[0] - playerPos[0]) < 0.125f
+                    && std::fabs(enemyProjectilePos[1] - playerPos[1]) < 0.125f
+                    )
+            {
+                playerAlive = false;
+            }
+
+            if(enemyProjectilePos[0] < -1.0f) enemyShooting = false;
+
+        }
 
 
         // PROJECTILE ANIMATION
         if(shooting)
         {
-            projectilePos[0] += 3.0f * elTime;
+            projectilePos[0] += 1.5f * elTime;
+            projectilePos[1] += projectilePosOffset[1] * elTime;
+            if(projectilePos[1] > 0.8f)
+            {
+                projectilePos[1] = 0.8f;
+                projectilePosOffset[1] = -projectilePosOffset[1];
+            }
+            if(projectilePos[1] < -0.8f)
+            {
+                projectilePos[1] = -0.8f;
+                projectilePosOffset[1] = -projectilePosOffset[1];
+            }
             if(projectilePos[0] > 0.8f)
             {
-                if(std::fabs(projectilePos[1] - targetPosY) < 0.15f)
+                if(std::fabs(projectilePos[1] - targetPosY) < 0.3f)
                 {
                     numHits++;
                     emit updateHitsLabel(QString("Acertos: %1").arg(numHits));
                     shooting = false;
+                    targetHit = true;
                 }
             }
             if(projectilePos[0] > 1.0f) shooting = false;
         }
+        if(targetHit){
+            if(flashCount % 50 < 25) glClearColor(1,0.4,0,1);
+            else glClearColor(0,0,0,1);
+            if(flashCount >= 500)
+            {
+                flashCount = 0;
+                targetHit = false;
+            }
+            flashCount++;
+
+        }
+        if(
+                std::fabs(playerPos[0] - 0.8f) < 0.2
+                && std::fabs(playerPos[1] - targetPosY) < 0.2
+                ) playerAlive = false;
+    }
+    else
+    {
+        emit updateHitsLabel(QString("Você perdeu! (Aperte ESC)"));
     }
     update();
 }

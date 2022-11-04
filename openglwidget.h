@@ -42,9 +42,8 @@ public:
     void keyPressEvent(QKeyEvent *event) override;
     void keyReleaseEvent(QKeyEvent *event) override;
 
-    float playerPosYOffset{0};
-    float playerPosY{0};
-    bool playerAlive{true};
+    std::array<float, 2> playerPosOffset;
+    std::array<float, 2> playerPos;
 
     float targetPosYOffset{2.0f};
     float targetPosY{0};
@@ -54,7 +53,17 @@ public:
 
     bool shooting{false};
     std::array<float,2> projectilePos;
+    std::array<float,2> projectilePosOffset;
     int numHits{0};
+
+    bool enemyShooting{false};
+    std::array<float, 2> enemyProjectilePos;
+    std::array<float, 2> enemyProjectileOffset;
+    bool playerAlive{true};
+
+    bool targetHit{false};
+    int flashCount{0};
+
 signals:
     void updateHitsLabel(QString);
 protected:
